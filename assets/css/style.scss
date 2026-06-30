@@ -1,0 +1,39 @@
+---
+# Кастомные стили поверх темы Cayman. Front matter (эти ---) обязателен,
+# иначе Jekyll не обработает SCSS.
+---
+
+@import "{{ site.theme }}";
+
+/* Компактная шапка вместо большого баннера Cayman */
+.page-header {
+  padding: 1.5rem 4rem;
+}
+
+.project-name {
+  font-size: 1.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.project-tagline {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  opacity: 0.8;
+}
+
+.page-header .btn {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+}
+
+@media screen and (max-width: 42em) {
+  .page-header {
+    padding: 1rem 1rem;
+  }
+  .project-name {
+    font-size: 1.4rem;
+  }
+  .project-tagline {
+    font-size: 0.9rem;
+  }
+}
