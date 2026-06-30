@@ -4,6 +4,8 @@
 
 # 01. C# язык и его возможности
 
+<a id="top"></a>
+
 
 
 > Статус: 🟡 в работе · Уровень: Senior
@@ -38,6 +40,7 @@
 
 
 
+<a id="q1"></a>
 ### Вопрос: Value type vs reference type — где живут, как передаются, boxing/unboxing
 
 **Краткий ответ:**
@@ -131,6 +134,7 @@ string msg = string.Format("x = {0}", 42); // 42 boxing в object[]
 
 
 
+<a id="q2"></a>
 ### Вопрос: `struct` vs `class` vs `record` vs `record struct` — когда что
 
 **Краткий ответ:**
@@ -282,6 +286,7 @@ readonly struct Point : IEquatable<Point>
 
 
 
+<a id="q3"></a>
 ### Вопрос: `string` — иммутабельность, интернирование, `StringBuilder`, `Span<char>`
 
 **Краткий ответ:**
@@ -321,6 +326,7 @@ int y = int.Parse(year);
 
 
 
+<a id="q4"></a>
 ### Вопрос: `ref`, `out`, `in`, `ref readonly`, `ref struct`
 
 **Краткий ответ:**
@@ -360,6 +366,7 @@ async Task BadAsync(Memory<byte> mem)
 
 
 
+<a id="q5"></a>
 ### Вопрос: Замыкания (closures) — захват переменных, баги в циклах
 
 **Краткий ответ:**
@@ -390,6 +397,7 @@ for (int i = 0; i < 3; i++) { int copy = i; actions.Add(() => Console.Write(copy
 
 
 
+<a id="q6"></a>
 ### Вопрос: Делегаты, `Func`/`Action`/`Predicate`, события
 
 **Краткий ответ:**
@@ -419,6 +427,7 @@ protected void OnOrderCreated(Order o)
 
 
 
+<a id="q7"></a>
 ### Вопрос: `IEnumerable` vs `IQueryable`, отложенное выполнение, `yield`
 
 **Краткий ответ:**
@@ -456,6 +465,7 @@ IEnumerable<int> Naturals()
 
 
 
+<a id="q8"></a>
 ### Вопрос: `IDisposable`, `using`, `IAsyncDisposable`, финализаторы
 
 **Краткий ответ:**
@@ -497,6 +507,7 @@ public class Resource : IDisposable
 
 
 
+<a id="q9"></a>
 ### Вопрос: Generics — ковариантность/контравариантность, ограничения
 
 **Краткий ответ:**
@@ -531,6 +542,7 @@ T Max<T>(T a, T b) where T : IComparable<T>
 
 
 
+<a id="q10"></a>
 ### Вопрос: Nullable reference types, `?`, `!`, `??`, `??=`
 
 **Краткий ответ:**
@@ -560,6 +572,7 @@ string sure = name!;                  // подавить предупрежде
 
 
 
+<a id="q11"></a>
 ### Вопрос: Pattern matching и switch expressions
 
 **Краткий ответ:**
@@ -597,6 +610,7 @@ string Describe(object o) => o switch
 
 
 
+<a id="q12"></a>
 ### Вопрос: `record` — value equality, `with`, деконструкция
 
 **Краткий ответ:**
@@ -626,6 +640,7 @@ Console.WriteLine(p == new Point(1, 2)); // True
 
 
 
+<a id="q13"></a>
 ### Вопрос: Extension methods — как резолвятся
 
 **Краткий ответ:**
@@ -654,6 +669,7 @@ public static class StringExtensions
 
 
 
+<a id="q14"></a>
 ### Вопрос: `dynamic`, `var`, `object` — различия
 
 **Краткий ответ:**
@@ -681,6 +697,7 @@ d.Foo();            // компилируется, но упадёт в рант
 
 
 
+<a id="q15"></a>
 ### Вопрос: Что нового в C# 9–13 (ключевое для Senior)
 
 **Краткий ответ (по версиям):**
@@ -712,6 +729,7 @@ public class Service(IRepo repo)
 
 
 
+<a id="q16"></a>
 ### Вопрос: Перегрузка операторов и приведения
 
 **Краткий ответ:**
@@ -741,6 +759,7 @@ public readonly struct Celsius
 
 
 
+<a id="q17"></a>
 ### Вопрос: Атрибуты, рефлексия, Source Generators
 
 **Краткий ответ:**
