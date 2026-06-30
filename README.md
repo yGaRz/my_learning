@@ -5,56 +5,70 @@
 
 > Статусы: ⬜ не начато · 🟡 в работе · ✅ готово
 
+📑 **[Индекс всех вопросов по темам](./QUESTIONS.md)** — сводный список, чтобы быстро найти нужную тему или похожий вопрос.
+
 ## Структура
 
-### Язык и платформа
+### Язык и платформа → [`topics/language-platform/`](./topics/language-platform)
 | # | Тема | Файл | Статус |
 |---|------|------|--------|
-| 1 | C# язык и его возможности | [topics/01-csharp-language.md](./topics/01-csharp-language.md) | 🟡 |
-| 2 | CLR, GC и управление памятью | [topics/02-clr-gc-memory.md](./topics/02-clr-gc-memory.md) | 🟡 |
-| 3 | Многопоточность и асинхронность | [topics/03-async-multithreading.md](./topics/03-async-multithreading.md) | 🟡 |
-| 4 | Коллекции и структуры данных | [topics/04-collections-data-structures.md](./topics/04-collections-data-structures.md) | 🟡 |
+| 1 | C# язык и его возможности | [language-platform/01-csharp-language.md](./topics/language-platform/01-csharp-language.md) | 🟡 |
+| 2 | CLR, GC и управление памятью | [language-platform/02-clr-gc-memory.md](./topics/language-platform/02-clr-gc-memory.md) | 🟡 |
+| 3 | Многопоточность и асинхронность | [language-platform/03-async-multithreading.md](./topics/language-platform/03-async-multithreading.md) | 🟡 |
+| 4 | Коллекции и структуры данных | [language-platform/04-collections-data-structures.md](./topics/language-platform/04-collections-data-structures.md) | 🟡 |
 
-### Проектирование и архитектура
+### Проектирование и архитектура → [`topics/architecture/`](./topics/architecture)
 | # | Тема | Файл | Статус |
 |---|------|------|--------|
-| 5 | ООП, SOLID и принципы проектирования | [topics/05-oop-solid-principles.md](./topics/05-oop-solid-principles.md) | 🟡 |
-| 6 | Паттерны проектирования | [topics/06-design-patterns.md](./topics/06-design-patterns.md) | 🟡 |
-| 7 | Архитектура приложений | [topics/07-architecture.md](./topics/07-architecture.md) | 🟡 |
-| 8 | DDD (Domain-Driven Design) | [topics/08-ddd.md](./topics/08-ddd.md) | 🟡 |
-| 9 | CQRS и Event Sourcing | [topics/09-cqrs-event-sourcing.md](./topics/09-cqrs-event-sourcing.md) | 🟡 |
+| 5 | ООП, SOLID и принципы проектирования | [architecture/05-oop-solid-principles.md](./topics/architecture/05-oop-solid-principles.md) | 🟡 |
+| 6 | Паттерны проектирования | [architecture/06-design-patterns.md](./topics/architecture/06-design-patterns.md) | 🟡 |
+| 7 | Архитектура приложений | [architecture/07-architecture.md](./topics/architecture/07-architecture.md) | 🟡 |
+| 8 | DDD (Domain-Driven Design) | [architecture/08-ddd.md](./topics/architecture/08-ddd.md) | 🟡 |
+| 9 | CQRS и Event Sourcing | [architecture/09-cqrs-event-sourcing.md](./topics/architecture/09-cqrs-event-sourcing.md) | 🟡 |
 
-### Web, API и данные
+### Web, API и данные → [`topics/web-data/`](./topics/web-data)
 | # | Тема | Файл | Статус |
 |---|------|------|--------|
-| 10 | ASP.NET Core и Web API | [topics/10-aspnet-core.md](./topics/10-aspnet-core.md) | 🟡 |
-| 11 | Конвейер обработки запросов и HTTP в Highload | [topics/11-request-pipeline-http-highload.md](./topics/11-request-pipeline-http-highload.md) | 🟡 |
-| 12 | gRPC и контракты API (REST/gRPC/GraphQL) | [topics/12-grpc-api-contracts.md](./topics/12-grpc-api-contracts.md) | 🟡 |
-| 13 | Entity Framework Core и доступ к данным | [topics/13-ef-core-data-access.md](./topics/13-ef-core-data-access.md) | 🟡 |
-| 14 | Базы данных и SQL | [topics/14-databases-sql.md](./topics/14-databases-sql.md) | 🟡 |
+| 10 | ASP.NET Core и Web API | [web-data/10-aspnet-core.md](./topics/web-data/10-aspnet-core.md) | 🟡 |
+| 11 | Конвейер обработки запросов и HTTP в Highload | [web-data/11-request-pipeline-http-highload.md](./topics/web-data/11-request-pipeline-http-highload.md) | 🟡 |
+| 12 | gRPC и контракты API (REST/gRPC/GraphQL) | [web-data/12-grpc-api-contracts.md](./topics/web-data/12-grpc-api-contracts.md) | 🟡 |
+| 13 | Entity Framework Core и доступ к данным | [web-data/13-ef-core-data-access.md](./topics/web-data/13-ef-core-data-access.md) | 🟡 |
+| 14 | Базы данных и SQL | [web-data/14-databases-sql.md](./topics/web-data/14-databases-sql.md) | 🟡 |
 
-### Распределённые системы
+### Распределённые системы → [`topics/distributed/`](./topics/distributed)
 | # | Тема | Файл | Статус |
 |---|------|------|--------|
-| 15 | Микросервисы и распределённые системы | [topics/15-microservices.md](./topics/15-microservices.md) | 🟡 |
-| 16 | Брокеры сообщений и интеграция | [topics/16-messaging-integration.md](./topics/16-messaging-integration.md) | 🟡 |
-| 17 | Кэширование (in-memory, Redis) | [topics/17-caching.md](./topics/17-caching.md) | 🟡 |
+| 15 | Микросервисы и распределённые системы | [distributed/15-microservices.md](./topics/distributed/15-microservices.md) | 🟡 |
+| 16 | Брокеры сообщений и интеграция | [distributed/16-messaging-integration.md](./topics/distributed/16-messaging-integration.md) | 🟡 |
+| 17 | Кэширование (in-memory, Redis) | [distributed/17-caching.md](./topics/distributed/17-caching.md) | 🟡 |
 
-### Качество и эксплуатация
+### Качество и эксплуатация → [`topics/quality-ops/`](./topics/quality-ops)
 | # | Тема | Файл | Статус |
 |---|------|------|--------|
-| 18 | Тестирование (unit, integration, моки) | [topics/18-testing.md](./topics/18-testing.md) | 🟡 |
-| 19 | Безопасность (auth, OWASP) | [topics/19-security.md](./topics/19-security.md) | 🟡 |
-| 20 | Производительность и профилирование | [topics/20-performance.md](./topics/20-performance.md) | 🟡 |
-| 21 | DevOps, CI/CD, Docker, Kubernetes | [topics/21-devops-cicd.md](./topics/21-devops-cicd.md) | 🟡 |
-| 22 | Наблюдаемость (логи, метрики, трейсинг) | [topics/22-observability.md](./topics/22-observability.md) | 🟡 |
+| 18 | Тестирование (unit, integration, моки) | [quality-ops/18-testing.md](./topics/quality-ops/18-testing.md) | 🟡 |
+| 19 | Безопасность (auth, OWASP) | [quality-ops/19-security.md](./topics/quality-ops/19-security.md) | 🟡 |
+| 20 | Производительность и профилирование | [quality-ops/20-performance.md](./topics/quality-ops/20-performance.md) | 🟡 |
+| 21 | DevOps, CI/CD, Docker, Kubernetes | [quality-ops/21-devops-cicd.md](./topics/quality-ops/21-devops-cicd.md) | 🟡 |
+| 22 | Наблюдаемость (логи, метрики, трейсинг) | [quality-ops/22-observability.md](./topics/quality-ops/22-observability.md) | 🟡 |
 
-### Собеседование в целом
+### Собеседование в целом → [`topics/interview/`](./topics/interview)
 | # | Тема | Файл | Статус |
 |---|------|------|--------|
-| 23 | System Design (проектирование систем) | [topics/23-system-design.md](./topics/23-system-design.md) | 🟡 |
-| 24 | Алгоритмы и задачи на собеседовании | [topics/24-algorithms-coding.md](./topics/24-algorithms-coding.md) | 🟡 |
-| 25 | Soft skills и поведенческие вопросы | [topics/25-soft-skills-behavioral.md](./topics/25-soft-skills-behavioral.md) | 🟡 |
+| 23 | System Design (проектирование систем) | [interview/23-system-design.md](./topics/interview/23-system-design.md) | 🟡 |
+| 24 | Алгоритмы и задачи на собеседовании | [interview/24-algorithms-coding.md](./topics/interview/24-algorithms-coding.md) | 🟡 |
+| 25 | Soft skills и поведенческие вопросы | [interview/25-soft-skills-behavioral.md](./topics/interview/25-soft-skills-behavioral.md) | 🟡 |
+
+### Нововведения C# по версиям → [`topics/language-platform/csharp-versions/`](./topics/language-platform/csharp-versions)
+Интересные возможности языка от версии к версии — для чтения и повторения перед собеседованием.
+
+| Версия | .NET | Файл | Ключевое |
+|--------|------|------|----------|
+| C# 8 | Core 3.0 | [csharp-08.md](./topics/language-platform/csharp-versions/csharp-08.md) | NRT, async streams, switch expressions, ranges, default interface methods |
+| C# 9 | .NET 5 | [csharp-09.md](./topics/language-platform/csharp-versions/csharp-09.md) | records, `init`, target-typed `new()`, top-level statements |
+| C# 10 | .NET 6 | [csharp-10.md](./topics/language-platform/csharp-versions/csharp-10.md) | `record struct`, global usings, file-scoped namespaces |
+| C# 11 | .NET 7 | [csharp-11.md](./topics/language-platform/csharp-versions/csharp-11.md) | raw strings, `required`, list patterns, generic math |
+| C# 12 | .NET 8 | [csharp-12.md](./topics/language-platform/csharp-versions/csharp-12.md) | primary constructors, collection expressions `[...]`, alias типов |
+| C# 13 | .NET 9 | [csharp-13.md](./topics/language-platform/csharp-versions/csharp-13.md) | `params` коллекции, `Lock`, partial-свойства, `\e` |
 
 ## Как пользоваться
 
@@ -68,7 +82,7 @@
 
 | Вопрос | Перейти к разбору |
 |--------|------|
-| Где применяются `Span<T>`/`Memory<T>` при работе с HTTP, зачем они нужны | [→ тема 11](./topics/11-request-pipeline-http-highload.md#q-span-memory-http) |
-| Подробно опиши, как работает HTTP-конвейер обработки запроса в .NET Core | [→ тема 11](./topics/11-request-pipeline-http-highload.md#q-http-pipeline) |
-| Как обеспечить безопасность при работе по HTTP | [→ тема 19](./topics/19-security.md#q-http-security) |
-| System Design: спроектируй сервис создания коротких ссылок | [→ тема 23](./topics/23-system-design.md#q-url-shortener) |
+| Где применяются `Span<T>`/`Memory<T>` при работе с HTTP, зачем они нужны | [→ тема 11](./topics/web-data/11-request-pipeline-http-highload.md#q-span-memory-http) |
+| Подробно опиши, как работает HTTP-конвейер обработки запроса в .NET Core | [→ тема 11](./topics/web-data/11-request-pipeline-http-highload.md#q-http-pipeline) |
+| Как обеспечить безопасность при работе по HTTP | [→ тема 19](./topics/quality-ops/19-security.md#q-http-security) |
+| System Design: спроектируй сервис создания коротких ссылок | [→ тема 23](./topics/interview/23-system-design.md#q-url-shortener) |
