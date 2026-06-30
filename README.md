@@ -1,7 +1,7 @@
 # Подготовка к собеседованию: Senior .NET Developer
 
 Материал для подготовки к техническому собеседованию, разбитый по темам.
-Каждая тема вынесена в отдельный файл в папке [`topics/`](./topics) и может дополняться.
+Каждая тема вынесена в отдельный файл в папке `topics/` и может дополняться.
 
 > Статусы: ⬜ не начато · 🟡 в работе · ✅ готово
 
@@ -9,7 +9,7 @@
 
 ## Структура
 
-### Язык и платформа → [`topics/language-platform/`](./topics/language-platform)
+### Язык и платформа
 
 | # | Тема | Файл | Статус |
 |---|------|------|--------|
@@ -18,7 +18,7 @@
 | 3 | Многопоточность и асинхронность | [language-platform/03-async-multithreading.md](./topics/language-platform/03-async-multithreading.md) | 🟡 |
 | 4 | Коллекции и структуры данных | [language-platform/04-collections-data-structures.md](./topics/language-platform/04-collections-data-structures.md) | 🟡 |
 
-### Проектирование и архитектура → [`topics/architecture/`](./topics/architecture)
+### Проектирование и архитектура
 
 | # | Тема | Файл | Статус |
 |---|------|------|--------|
@@ -28,7 +28,7 @@
 | 8 | DDD (Domain-Driven Design) | [architecture/08-ddd.md](./topics/architecture/08-ddd.md) | 🟡 |
 | 9 | CQRS и Event Sourcing | [architecture/09-cqrs-event-sourcing.md](./topics/architecture/09-cqrs-event-sourcing.md) | 🟡 |
 
-### Web, API и данные → [`topics/web-data/`](./topics/web-data)
+### Web, API и данные
 
 | # | Тема | Файл | Статус |
 |---|------|------|--------|
@@ -38,7 +38,7 @@
 | 13 | Entity Framework Core и доступ к данным | [web-data/13-ef-core-data-access.md](./topics/web-data/13-ef-core-data-access.md) | 🟡 |
 | 14 | Базы данных и SQL | [web-data/14-databases-sql.md](./topics/web-data/14-databases-sql.md) | 🟡 |
 
-### Распределённые системы → [`topics/distributed/`](./topics/distributed)
+### Распределённые системы
 
 | # | Тема | Файл | Статус |
 |---|------|------|--------|
@@ -46,7 +46,7 @@
 | 16 | Брокеры сообщений и интеграция | [distributed/16-messaging-integration.md](./topics/distributed/16-messaging-integration.md) | 🟡 |
 | 17 | Кэширование (in-memory, Redis) | [distributed/17-caching.md](./topics/distributed/17-caching.md) | 🟡 |
 
-### Качество и эксплуатация → [`topics/quality-ops/`](./topics/quality-ops)
+### Качество и эксплуатация
 
 | # | Тема | Файл | Статус |
 |---|------|------|--------|
@@ -56,7 +56,7 @@
 | 21 | DevOps, CI/CD, Docker, Kubernetes | [quality-ops/21-devops-cicd.md](./topics/quality-ops/21-devops-cicd.md) | 🟡 |
 | 22 | Наблюдаемость (логи, метрики, трейсинг) | [quality-ops/22-observability.md](./topics/quality-ops/22-observability.md) | 🟡 |
 
-### Собеседование в целом → [`topics/interview/`](./topics/interview)
+### Собеседование в целом
 
 | # | Тема | Файл | Статус |
 |---|------|------|--------|
@@ -64,7 +64,8 @@
 | 24 | Алгоритмы и задачи на собеседовании | [interview/24-algorithms-coding.md](./topics/interview/24-algorithms-coding.md) | 🟡 |
 | 25 | Soft skills и поведенческие вопросы | [interview/25-soft-skills-behavioral.md](./topics/interview/25-soft-skills-behavioral.md) | 🟡 |
 
-### Нововведения C# по версиям → [`topics/language-platform/csharp-versions/`](./topics/language-platform/csharp-versions)
+### Нововведения C# по версиям
+
 Интересные возможности языка от версии к версии — для чтения и повторения перед собеседованием.
 
 | Версия | .NET | Файл | Ключевое |
