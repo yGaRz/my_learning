@@ -10,6 +10,7 @@
 ## Структура
 
 ### Язык и платформа → [`topics/language-platform/`](./topics/language-platform)
+
 | # | Тема | Файл | Статус |
 |---|------|------|--------|
 | 1 | C# язык и его возможности | [language-platform/01-csharp-language.md](./topics/language-platform/01-csharp-language.md) | 🟡 |
@@ -18,6 +19,7 @@
 | 4 | Коллекции и структуры данных | [language-platform/04-collections-data-structures.md](./topics/language-platform/04-collections-data-structures.md) | 🟡 |
 
 ### Проектирование и архитектура → [`topics/architecture/`](./topics/architecture)
+
 | # | Тема | Файл | Статус |
 |---|------|------|--------|
 | 5 | ООП, SOLID и принципы проектирования | [architecture/05-oop-solid-principles.md](./topics/architecture/05-oop-solid-principles.md) | 🟡 |
@@ -27,6 +29,7 @@
 | 9 | CQRS и Event Sourcing | [architecture/09-cqrs-event-sourcing.md](./topics/architecture/09-cqrs-event-sourcing.md) | 🟡 |
 
 ### Web, API и данные → [`topics/web-data/`](./topics/web-data)
+
 | # | Тема | Файл | Статус |
 |---|------|------|--------|
 | 10 | ASP.NET Core и Web API | [web-data/10-aspnet-core.md](./topics/web-data/10-aspnet-core.md) | 🟡 |
@@ -36,6 +39,7 @@
 | 14 | Базы данных и SQL | [web-data/14-databases-sql.md](./topics/web-data/14-databases-sql.md) | 🟡 |
 
 ### Распределённые системы → [`topics/distributed/`](./topics/distributed)
+
 | # | Тема | Файл | Статус |
 |---|------|------|--------|
 | 15 | Микросервисы и распределённые системы | [distributed/15-microservices.md](./topics/distributed/15-microservices.md) | 🟡 |
@@ -43,6 +47,7 @@
 | 17 | Кэширование (in-memory, Redis) | [distributed/17-caching.md](./topics/distributed/17-caching.md) | 🟡 |
 
 ### Качество и эксплуатация → [`topics/quality-ops/`](./topics/quality-ops)
+
 | # | Тема | Файл | Статус |
 |---|------|------|--------|
 | 18 | Тестирование (unit, integration, моки) | [quality-ops/18-testing.md](./topics/quality-ops/18-testing.md) | 🟡 |
@@ -52,6 +57,7 @@
 | 22 | Наблюдаемость (логи, метрики, трейсинг) | [quality-ops/22-observability.md](./topics/quality-ops/22-observability.md) | 🟡 |
 
 ### Собеседование в целом → [`topics/interview/`](./topics/interview)
+
 | # | Тема | Файл | Статус |
 |---|------|------|--------|
 | 23 | System Design (проектирование систем) | [interview/23-system-design.md](./topics/interview/23-system-design.md) | 🟡 |

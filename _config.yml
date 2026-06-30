@@ -1,0 +1,16 @@
+title: "Подготовка к собеседованию: Senior .NET Developer"
+description: "Конспект тем и вопросов для технического собеседования"
+
+theme: jekyll-theme-cayman
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+  syntax_highlighter: rouge
+
+# Не включать в сборку служебные файлы
+exclude:
+  - .vscode/
+  - graphify-out/
+  - "*.ps1"
