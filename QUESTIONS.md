@@ -26,7 +26,6 @@
 - [`record` — value equality, `with`, деконструкция](./topics/language-platform/01-csharp-language.md#q12)
 - [Extension methods — как резолвятся](./topics/language-platform/01-csharp-language.md#q13)
 - [`dynamic`, `var`, `object` — различия](./topics/language-platform/01-csharp-language.md#q14)
-- [Что нового в C# 9–13 (ключевое для Senior)](./topics/language-platform/01-csharp-language.md#q15)
 - [Перегрузка операторов и приведения](./topics/language-platform/01-csharp-language.md#q16)
 - [Атрибуты, рефлексия, Source Generators](./topics/language-platform/01-csharp-language.md#q17)
 

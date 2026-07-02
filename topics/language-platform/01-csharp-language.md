@@ -4,7 +4,7 @@
 
 <a id="top"></a>
 
-> Статус: 🟡 в работе · Уровень: Senior
+> Статус: ✅ готово · Уровень: Senior
 
 ## Что проверяют
 
@@ -18,17 +18,16 @@
 - [x] `ref`[,](#q4) `out`[,](#q4) `in`[,](#q4) `ref readonly`[,](#q4) `ref struct` [(](#q4)`Span<T>`[, почему нельзя в async)](#q4)
 - [x] [Замыкания (closures): захват переменных, типичные баги в циклах](#q5)
 - [x] [Делегаты,](#q6) `Func`[/](#q6)`Action`[/](#q6)`Predicate`[, события,](#q6) `EventHandler`
-- [ ] `IEnumerable` [vs](#q7) `IQueryable`[, отложенное выполнение,](#q7) `yield`
-- [ ] `IDisposable`[,](#q8) `using`[,](#q8) `IAsyncDisposable`[, finalizers](#q8)
-- [ ] [Generics: ковариантность/контравариантность (](#q9)`in`[/](#q9)`out`[), ограничения (](#q9)`where`[)](#q9)
-- [ ] [Nullable reference types,](#q10) `?`[,](#q10) `!`[,](#q10) `??`[,](#q10) `??=`
-- [ ] [Pattern matching, switch expressions](#q11)
-- [ ] `record` [— value equality,](#q12) `with`[-выражения, деконструкция](#q12)
-- [ ] [Extension methods, как резолвятся](#q13)
-- [ ] `dynamic`[,](#q14) `var`[,](#q14) `object` [— различия](#q14)
-- [ ] [Что нового в C# 9/10/11/12/13 (init, file-scoped namespaces, primary constructors, collection expressions)](#q15)
-- [ ] [Перегрузка операторов, неявные/явные приведения](#q16)
-- [ ] [Атрибуты и рефлексия, Source Generators](#q17)
+- [x] `IEnumerable` [vs](#q7) `IQueryable`[, отложенное выполнение,](#q7) `yield`
+- [x] `IDisposable`[,](#q8) `using`[,](#q8) `IAsyncDisposable`[, finalizers](#q8)
+- [x] [Generics: ковариантность/контравариантность (](#q9)`in`[/](#q9)`out`[), ограничения (](#q9)`where`[)](#q9)
+- [x] [Nullable reference types,](#q10) `?`[,](#q10) `!`[,](#q10) `??`[,](#q10) `??=`
+- [x] [Pattern matching, switch expressions](#q11)
+- [x] `record` [— value equality,](#q12) `with`[-выражения, деконструкция](#q12)
+- [x] [Extension methods, как резолвятся](#q13)
+- [x] `dynamic`[,](#q14) `var`[,](#q14) `object` [— различия](#q14)
+- [x] [Перегрузка операторов, неявные/явные приведения](#q16)
+- [x] [Атрибуты и рефлексия, Source Generators](#q17)
 
 
 
@@ -634,32 +633,147 @@ protected async Task OnOrderCreatedAsync(Order o)
 
 **Краткий ответ:**
 
-- `IEnumerable<T>` — последовательность в памяти; LINQ-операторы (`LINQ to Objects`) выполняются как **делегаты в C#**.
-- `IQueryable<T>` — запрос как **дерево выражений** (`Expression`), которое провайдер (EF Core) транслирует в SQL и выполняет на сервере БД.
-- **Отложенное выполнение (deferred execution)**: LINQ-запрос не выполняется в момент описания — только при перечислении (`foreach`, `ToList`, `Count` и т.п.).
-- `yield return` — ленивый итератор: значения генерируются по требованию, без материализации всей коллекции.
+- `IEnumerable<T>` — контракт «эту последовательность можно перечислить» (`GetEnumerator()` → `MoveNext()` / `Current`). LINQ to Objects выполняется как **делегаты в C#** в памяти.
+- `IQueryable<T>` — наследует `IEnumerable<T>`, но хранит запрос как **дерево выражений** (`Expression`) + `IQueryProvider`. Провайдер (EF Core) транслирует его в SQL и выполняет на сервере БД.
+- **Отложенное выполнение**: описание запроса (`Where`, `Select`…) ничего не делает — работа начинается при материализации (`ToList`, `Count`, `First`) или `foreach`.
+- `yield return` — способ описать **ленивую последовательность** со своей логикой генерации элементов; компилятор строит state machine с `IEnumerator<T>`. Не обязательно «свой контейнер» — чаще это **кастомный обход** (дерево, файл, поток) без хранения всех элементов в `List`.
 
-**Пример:**
+| | `IEnumerable<T>` | `IQueryable<T>` |
+|---|---|---|
+| Что описывает | Цепочку делегатов | Дерево `Expression` |
+| Где выполняется | CLR, в памяти | Провайдер (SQL на БД) |
+| Типичный источник | `List`, массив, `yield` | `DbSet<T>` |
+
+**`AsEnumerable()` vs `ToList()` — зачем оба, если `List` тоже `IEnumerable`?**
+
+`AsEnumerable()` **не загружает данные** — это переключатель режима LINQ: с `IQueryable` (expression tree → SQL) на `IEnumerable` (делегаты → C#). Запрос к БД всё равно отложен до первого перечисления.
+
+`ToList()` **сразу выполняет** SQL (или что накопилось в `IQueryable`) и кладёт **все** подходящие строки в `List<T>` в памяти.
 
 ```csharp
-// IEnumerable: Where выполнится в памяти (после загрузки всех строк!)
-IEnumerable<User> q1 = db.Users.AsEnumerable().Where(u => u.Age > 18);
+// SQL: WHERE Age > 18  —  потом фильтр в C# (лениво, один проход)
+var lazy = db.Users
+    .Where(u => u.Age > 18)              // уходит в SQL
+    .AsEnumerable()                       // «дальше только C#», данных ещё нет
+    .Where(u => IsVipByCustomRule(u));   // не транслируется в SQL
 
-// IQueryable: Where уйдёт в SQL (WHERE Age > 18)
-IQueryable<User> q2 = db.Users.Where(u => u.Age > 18);
+// SQL: WHERE Age > 18  —  сразу в List, потом фильтр в C#
+var eager = db.Users
+    .Where(u => u.Age > 18)
+    .ToList()                             // ← здесь round-trip к БД
+    .Where(u => IsVipByCustomRule(u));
+```
 
+**Когда что брать:**
+
+| Ситуация | Выбор |
+|---|---|
+| Нужен один проход, дальше только C#-логика | `AsEnumerable()` или `ToList()` — почти одинаково |
+| Нужно перечислить результат **несколько раз** | `ToList()` / `ToArray()` |
+| Нужен индекс, `Count` без повторного SQL | `ToList()` |
+| Отвязать от `DbContext` (вернуть из репозитория) | `ToListAsync()` |
+| После SQL ещё `Take(5)` и не хотите материализовать лишнее | сначала `Take` в `IQueryable`, потом C# |
+
+Частая ошибка — думать, что `AsEnumerable()` «нужен, чтобы обработать `IQueryable`». На самом деле **`ToList()` тоже переводит в память** и даёт `IEnumerable`. `AsEnumerable()` нужен, когда хотите **остаться ленивыми** после SQL-части: один конвейер, один запрос к БД, без промежуточного списка. Если все строки после SQL всё равно нужны в RAM — `ToList()` проще и честнее.
+
+```csharp
+// ❌ AsEnumerable() в начале — вся таблица в память при перечислении
+db.Orders.AsEnumerable().Where(o => o.Total > 1000);
+
+// ✅ сначала SQL, потом C# только если надо
+db.Orders.Where(o => o.Total > 1000).AsEnumerable().Where(o => Complex(o));
+```
+
+**`yield return` — зачем и как это связано с LINQ**
+
+`yield` не про «написать свой `List<T>`». Это про то, чтобы **отдавать элементы по одному** по мере запроса, не создавая массив/список на все элементы сразу. Всё, что реализует `IEnumerable<T>`, можно `foreach` и оборачивать в LINQ (`Where`, `Select`, `Take`…).
+
+```csharp
 IEnumerable<int> Naturals()
 {
     int i = 1;
-    while (true) yield return i++;   // бесконечная ленивая последовательность
+    while (true) yield return i++;   // бесконечно, но Take(5) остановит на 5-м
 }
+
+var firstFive = Naturals().Where(n => n % 2 == 0).Take(5);  // 2, 4, 6, 8, 10
+```
+
+**Практический пример: обход дерева (аналог идеи B-tree search)**
+
+B-tree в БД — это **внутренняя структура индекса** на диске; в прикладном C# вы редко пишете B-tree сами. Зато та же идея — **обойти иерархию и лениво отдавать элементы** — идеально ложится на `yield`. Классический пример: обход дерева категорий в глубину (DFS) и LINQ поверх.
+
+```csharp
+sealed class CategoryNode
+{
+    public required string Name { get; init; }
+    public List<CategoryNode> Children { get; } = new();
+}
+
+// Ленивый обход: элементы появляются по мере движения по дереву
+static IEnumerable<CategoryNode> WalkDepthFirst(CategoryNode root)
+{
+    yield return root;
+    foreach (var child in root.Children)
+        foreach (var descendant in WalkDepthFirst(child))
+            yield return descendant;
+}
+
+// «Поиск» по дереву — обычный LINQ, без отдельного метода Search
+CategoryNode electronics = BuildSampleTree();
+
+IEnumerable<string> paths =
+    WalkDepthFirst(electronics)
+        .Where(n => n.Name.Contains("Phone", StringComparison.OrdinalIgnoreCase))
+        .Select(n => n.Name);
+
+foreach (var name in paths)
+    Console.WriteLine(name);   // обход стартует здесь; до первого Phone узлы не «собираются в список»
+```
+
+Сравните с наивным вариантом **без** `yield` — пришлось бы в каждом методе создавать `List<CategoryNode>`, склеивать рекурсивно и держать всё дерево в памяти до начала фильтрации:
+
+```csharp
+static List<CategoryNode> WalkEager(CategoryNode root)
+{
+    var result = new List<CategoryNode> { root };
+    foreach (var child in root.Children)
+        result.AddRange(WalkEager(child));   // аллокация списка на каждом уровне
+    return result;
+}
+```
+
+Ещё бытовой пример — чтение файла построчно без `File.ReadAllLines` (который грузит весь файл):
+
+```csharp
+static IEnumerable<string> ReadLinesLazy(string path)
+{
+    using var reader = new StreamReader(path);
+    string? line;
+    while ((line = reader.ReadLine()) is not null)
+        yield return line;
+}
+
+var errors = ReadLinesLazy("app.log")
+    .Where(l => l.Contains("ERROR"))
+    .Take(100);
 ```
 
 **Подводные камни:**
 
-- Преждевременный `AsEnumerable()`/`ToList()` тянет всю таблицу в память — частая причина тормозов с EF.
-- **Множественный перебор** отложенного запроса = повторное выполнение (и повторный запрос к БД). Материализуйте через `ToList()`, если перебираете несколько раз.
-- Захват изменяемой переменной в отложенном запросе даёт «неожиданное» значение на момент выполнения.
+- Преждевременный `AsEnumerable()` в **начале** цепочки тянет всю таблицу в память — частая причина тормозов с EF.
+- **Множественный перебор** отложенного `IQueryable` = повторный SQL. Материализуйте через `ToList()`, если проходите несколько раз.
+- Захват изменяемой переменной в отложенном запросе даёт значение **на момент выполнения**, не создания:
+
+```csharp
+int minAge = 18;
+var q = users.Where(u => u.Age > minAge);
+minAge = 21;
+var result = q.ToList();   // Age > 21
+```
+
+- Побочные эффекты в `Select` срабатывают при перечислении и **повторяются** при повторном проходе.
+- `yield` + `finally` в итераторе: `finally` выполняется при `Dispose` перечислителя (конец `foreach`), а не после каждого элемента.
+- Не возвращайте «голый» `IQueryable` из метода после `Dispose` `DbContext` — материализуйте (`ToListAsync`) или перечисляйте внутри lifetime контекста.
 
 [↑ Наверх](#top)
 
@@ -718,25 +832,165 @@ public class Resource : IDisposable
 - **Ковариантность (**`out T`**)** — можно использовать более производный тип как менее производный: `IEnumerable<string>` → `IEnumerable<object>`. Только для **возвращаемых** позиций.
 - **Контравариантность (**`in T`**)** — наоборот: `IComparer<object>` → `IComparer<string>`. Только для **входных** позиций.
 - Вариантность поддерживается только интерфейсами и делегатами (не классами) и только для ссылочных типов.
-- **Ограничения (**`where`**)**: `where T : class`, `struct`, `new()`, `IInterface`, `BaseClass`, `notnull`, `unmanaged`.
+- **`where`** — ограничения на параметр типа: компилятор разрешает внутри метода/класса только те операции, которые гарантированно есть у `T`.
 
-**Пример:**
+**Вариантность — пример:**
 
 ```csharp
-interface IProducer<out T> { T Get(); }     // ковариантный
-interface IConsumer<in T> { void Set(T v); } // контравариантный
+interface IProducer<out T> { T Get(); }      // ковариантный: T только «выходит»
+interface IConsumer<in T> { void Set(T v); } // контравариантный: T только «входит»
 
 IProducer<string> ps = ...;
 IProducer<object> po = ps;   // ок благодаря out
 
-T Max<T>(T a, T b) where T : IComparable<T>
+IConsumer<object> co = ...;
+IConsumer<string> cs = co;   // ок благодаря in
+```
+
+**Ограничения `where` — каждое и зачем**
+
+Ограничения можно **комбинировать** (через запятую). Порядок: сначала `class`/`struct`/`unmanaged`/`notnull`, затем **один** базовый класс, затем интерфейсы, **`new()` — последним**.
+
+```csharp
+where T : class, IDisposable, new()
+where T : struct, IComparable<T>
+where T : notnull
+where T : unmanaged
+```
+
+| Ограничение | Что означает | Зачем / что открывает |
+|---|---|---|
+| `where T : class` | `T` — **ссылочный** тип (`string`, `List<>`, свой класс). Value-типы (`int`, `struct`) запрещены | Можно присвоить `null`, сравнивать с `null`, использовать там, где нужен именно reference type |
+| `where T : struct` | `T` — **value-тип**, причём non-nullable (`int`, `DateTime`, свой `struct`). `string` и классы запрещены | `default(T)` — нули/значение по умолчанию; часто в паре с `IComparable<T>` для сравнения без боксинга |
+| `where T : new()` | У `T` есть **публичный конструктор без параметров** | Можно писать `new T()` — фабрики, пулы, `Activator`-подобная логика |
+| `where T : IInterface` | `T` **реализует интерфейс** (можно несколько: `IComparable<T>, IDisposable`) | Вызов методов интерфейса: `t.CompareTo(...)`, `t.Dispose()` |
+| `where T : BaseClass` | `T` **наследует** базовый класс (только **один** класс в цепочке ограничений) | Доступ к членам базы: `t.SomeBaseMethod()` |
+| `where T : notnull` | `T` **не помечен как nullable** (NRT, C# 8+) | Компилятор считает `T` non-null; полезно в generic-коде с NRT, когда `null` для `T` недопустим |
+| `where T : unmanaged` | `T` — **неуправляемый** тип: примитивы, указатели, `struct` без ссылочных полей | `unsafe`, указатели `T*`, `stackalloc T[]`, `Span<T>` в низкоуровневом коде |
+
+**`where T : class`**
+
+```csharp
+static void LogLength<T>(T value) where T : class
+{
+    if (value is null)
+        Console.WriteLine("(null)");
+    else
+        Console.WriteLine(value.ToString()?.Length);
+}
+
+LogLength("hi");        // ок
+LogLength(42);            // ❌ int не class
+```
+
+Типичное сочетание: `where T : class?` в старом коде без NRT; с NRT чаще `where T : class` или `where T : notnull, class`.
+
+**`where T : struct`**
+
+```csharp
+static T? ParseOrNull<T>(string s) where T : struct, IParsable<T>
+{
+    return T.TryParse(s, null, out T result) ? result : null;  // T? = Nullable<T>
+}
+
+int? n = ParseOrNull<int>("42");
+```
+
+`struct` **не** запрещает `int?` при вызове — `Nullable<int>` сам struct. Запрещает передать `string` или свой `class` как `T`.
+
+**`where T : new()`**
+
+```csharp
+static T CreateDefault<T>() where T : new() => new T();
+
+var list = CreateDefault<List<int>>();   // new List<int>()
+var bad  = CreateDefault<StringBuilder>(); // ❌ нет public parameterless ctor
+```
+
+`new()` не сработает с `abstract class` и интерфейсами. Часто комбинируют: `where T : class, new()` — «конкретный класс с дефолтным конструктором».
+
+**`where T : IInterface` и `where T : BaseClass`**
+
+```csharp
+static T Max<T>(T a, T b) where T : IComparable<T>
     => a.CompareTo(b) >= 0 ? a : b;
+
+class Animal { public string Name { get; set; } = ""; }
+class Dog : Animal { public void Bark() => Console.WriteLine("woof"); }
+
+static void NameUpper<T>(T pet) where T : Animal
+{
+    pet.Name = pet.Name.ToUpper();   // поле базового класса
+    // pet.Bark();                   // ❌ компилятор не знает, что T — Dog
+}
+```
+
+Интерфейсов может быть несколько; класс — максимум один. Если нужен и базовый класс, и интерфейс: `where T : Animal, IComparable<T>`.
+
+**`where T : notnull`**
+
+Работает с **nullable reference types**: запрещает подставить `string?`, `T?` с nullable-аннотацией.
+
+```csharp
+static void Use<T>(T value) where T : notnull
+{
+    // компилятор не ругается на использование value без проверки на null
+    Console.WriteLine(value.ToString());
+}
+
+Use("ok");
+string? maybe = null;
+// Use(maybe);   // ❌ предупреждение/ошибка: string? не подходит под notnull
+```
+
+`notnull` совместим и с value-, и со ссылочными типами. Для ссылочных часто пишут `where T : notnull, class` — явно «ссылочный и не null».
+
+**`where T : unmanaged`**
+
+«Без ссылок внутри» — можно копировать побитово, использовать в `unsafe`.
+
+```csharp
+static unsafe void Fill<T>(Span<T> buffer, T value) where T : unmanaged
+{
+    buffer.Fill(value);
+}
+
+Fill(stackalloc int[10], 0);     // ок
+Fill(stackalloc bool[4], true);  // ok — bool unmanaged
+
+// Fill(stackalloc string?[1], null);  // ❌ string? не unmanaged
+// decimal — тоже не unmanaged
+```
+
+`unmanaged` ⊆ `struct`: все unmanaged — struct, но не наоборот (`struct` с полем `string` — managed).
+
+**Сводка: что с чем сочетается**
+
+| Комбинация | Смысл |
+|---|---|
+| `class, new()` | Конкретный ссылочный тип с дефолтным конструктором |
+| `struct, IComparable<T>` | Сравниваемый value-тип |
+| `notnull, class` | Non-null ссылочный тип (типично с NRT) |
+| `unmanaged` | Низкоуровневый код, `Span`, указатели |
+| `Base, IInterface, new()` | Полный набор: наследник, интерфейс, можно `new T()` |
+
+**Пример из BCL:**
+
+```csharp
+// Dictionary<TKey, TValue> — типичный набор ограничений
+public class Dictionary<TKey, TValue>
+    where TKey : notnull   // ключ не null (NRT + логика словаря)
+{ ... }
 ```
 
 **Подводные камни:**
 
-- Вариантность не работает для value-типов: `IEnumerable<int>` НЕ приводится к `IEnumerable<object>`.
-- `out`/`in` имеют ограничения на позиции использования параметра — компилятор это проверяет.
+- Вариантность не работает для value-типов: `IEnumerable<int>` НЕ приводится к `IEnumerable<object>` (боксинг при обходе — отдельная история).
+- `out`/`in` имеют ограничения на позиции использования параметра — компилятор это проверяет (`out` нельзя в параметрах метода `void M(T x)`).
+- `new()` требует **public** parameterless ctor — `protected` внутренний конструктор базы не считается.
+- `struct` не означает «любой тип» — классы и интерфейсы как `T` отпадают.
+- `notnull` — **аннотация компилятора**, в рантайме `null` всё ещё можно протолкнуть через отключённый NRT, рефлексию или `default!`.
+- Несколько ограничений `class` + `struct` одновременно — **невозможно**.
 
 [↑ Наверх](#top)
 
@@ -847,23 +1101,126 @@ Console.WriteLine(p == new Point(1, 2)); // True
 
 **Краткий ответ:**
 
-- Статический метод в статическом классе с `this` у первого параметра. Компилятор переписывает `obj.Ext()` в `StaticClass.Ext(obj)`.
-- Видимы только при наличии `using` нужного пространства имён. **Метод экземпляра всегда приоритетнее** одноимённого extension-метода.
+- Extension method — **не** метод внутри класса. Это обычный `static` метод в `static` классе с модификатором `this` у **первого** параметра. Синтаксис `obj.Ext()` — сахар: компилятор переписывает в `ExtClass.Ext(obj)`.
+- Зачем: «добавить» методы к чужому типу (`string`, `IEnumerable<T>`) **без наследования** и без изменения исходника. Вся логика живёт в **вашем** static-классе.
+- Видны только при `using` пространства имён, где объявлен static-класс. **Метод экземпляра всегда побеждает** extension с тем же именем и подходящей сигнатурой.
 
-**Пример:**
+**Синтаксис и что генерирует компилятор:**
 
 ```csharp
-public static class StringExtensions
+namespace MyApp.Extensions
 {
-    public static bool IsNullOrEmpty(this string? s) => string.IsNullOrEmpty(s);
+    public static class StringExtensions
+    {
+        public static bool IsBlank(this string? s)
+            => string.IsNullOrWhiteSpace(s);
+
+        public static string Truncate(this string s, int max)
+            => s.Length <= max ? s : s[..max];
+    }
 }
-// "abc".IsNullOrEmpty();
+
+// using MyApp.Extensions;  — без этого extension-методы не видны
+
+"  ".IsBlank();              // → StringExtensions.IsBlank("  ")
+"hello".Truncate(3);         // → StringExtensions.Truncate("hello", 3)
 ```
+
+Класс `string` **не меняется** — в IL нет «вшитого» `IsBlank`. Первый аргумент — просто `this` в disguise.
+
+**Зачем используют (типичные кейсы):**
+
+| Кейс | Пример |
+|---|---|
+| Утилиты над BCL | `Truncate`, `IsBlank` для `string` |
+| Fluent API | `services.AddDbContext<...>()` — extension на `IServiceCollection` |
+| LINQ | `Where`, `Select` — extensions на `IEnumerable<T>` / `IQueryable<T>` |
+| Читаемость | `order.Validate()` вместо `OrderValidator.Validate(order)` |
+
+**Как резолвятся — порядок поиска**
+
+Компилятор ищет метод для вызова `receiver.Method(args)` **в таком порядке**:
+
+1. **Методы экземпляра** самого типа `receiver` (включая унаследованные).
+2. Если подходящего нет — **extension methods** из всех static-классов в scope (`using` + текущий namespace).
+3. Среди кандидатов — обычное **разрешение перегрузок** (более специфичный тип, меньше неявных преобразований).
+
+```csharp
+public class Widget
+{
+    public void Print() => Console.WriteLine("instance");
+}
+
+static class WidgetExtensions
+{
+    public static void Print(this Widget w) => Console.WriteLine("extension");
+}
+
+new Widget().Print();   // "instance" — экземплярный метод победил
+```
+
+```csharp
+// Два extension в разных namespace — нужен using; при конфликте — ошибка неоднозначности
+namespace A { static class E { public static void M(this string s) => ...; } }
+namespace B { static class E { public static void M(this string s) => ...; } }
+// using A; using B;  →  "abc".M();  // ❌ ambiguous
+```
+
+**Extension на интерфейсе — почему работает LINQ:**
+
+```csharp
+public static IEnumerable<T> Where<T>(this IEnumerable<T> source, Func<T, bool> pred)
+```
+
+Любой тип, реализующий `IEnumerable<T>` (`List<T>`, массив, свой класс), **получает** `Where` через extension — наследовать от `Enumerable` не нужно.
+
+```csharp
+int[] nums = { 1, 2, 3 };
+nums.Where(x => x > 1);   // extension на IEnumerable<int>
+```
+
+**`null` как receiver:**
+
+Extension можно вызвать на `null` — это просто первый аргумент:
+
+```csharp
+string? s = null;
+s.IsBlank();   // компилируется! внутри IsBlank s == null
+
+// эквивалент:
+StringExtensions.IsBlank(s);
+```
+
+Поэтому extension **обязан** сам обрабатывать `null`, если это важно. Обычный instance-метод на `null` дал бы `NullReferenceException` до входа в метод.
+
+**Generic extension:**
+
+```csharp
+public static T? FirstOrDefault<T>(this IEnumerable<T> source, Func<T, bool> pred)
+```
+
+`T` выводится из `source`. Один метод — все коллекции.
+
+**Ограничения (что нельзя):**
+
+- Не добавить «виртуальный» метод в иерархию — polymorphism через override **не работает** (это static dispatch).
+- Нет доступа к `private` полям типа — только public API + то, что сами положили в extension.
+- Нельзя extension с `ref this` как первый параметр в старых версиях; в современном C# есть `ref`/`scoped` extensions — редко на собесах.
 
 **Подводные камни:**
 
-- Можно вызывать на `null` (это просто аргумент) — поэтому extension-метод должен сам обрабатывать null.
-- Конфликты имён из разных namespace разрешаются по `using`; это может приводить к неожиданной перегрузке.
+- Злоупотребление extensions → «магия» по всему коду, непонятно откуда метод (IDE показывает, но в code review легко пропустить).
+- Конфликты имён из разных `using` → ambiguous call.
+- Extension **не заменяет** domain-логику на типе: если метод — часть поведения сущности, лучше метод класса.
+- `Microsoft.AspNetCore.*` и LINQ — сотни extensions; без `using` код «не компилируется» — типичная ошибка новичка.
+
+**Шпаргалка для собеса:**
+
+```
+obj.Foo()  →  1) есть instance Foo? → вызываем его
+             2) нет → ищем static Foo(this T obj, ...) в scope
+             3) переписываем в StaticClass.Foo(obj, ...)
+```
 
 [↑ Наверх](#top)
 
@@ -899,45 +1256,68 @@ d.Foo();            // компилируется, но упадёт в рант
 
 
 
-<a id="q15"></a>
-### Вопрос: Что нового в C# 9–13 (ключевое для Senior)
-
-**Краткий ответ (по версиям):**
-
-- **C# 9**: `record`, init-сеттеры, target-typed `new()`, top-level statements, улучшенный pattern matching.
-- **C# 10**: `record struct`, global usings, file-scoped namespaces, const-интерполяция.
-- **C# 11**: required-члены, raw string literals (`"""`), list patterns, generic math (`INumber<T>`).
-- **C# 12**: primary constructors для классов/структур, collection expressions (`[1, 2, 3]`), `ref readonly` параметры, alias любых типов.
-- **C# 13**: `params` для коллекций, `Lock` тип, `\e` escape, partial-свойства, неявный индекс `^` в инициализаторах.
-
-**Пример:**
-
-```csharp
-// primary constructor + collection expression (C# 12)
-public class Service(IRepo repo)
-{
-    private readonly int[] _defaults = [1, 2, 3];
-    public Task Do() => repo.SaveAsync(_defaults);
-}
-```
-
-**Подводные камни:**
-
-- Primary constructor у класса захватывает параметры в скрытые поля — легко случайно «оставить» mutable-зависимость; не путать с record-семантикой.
-
-[↑ Наверх](#top)
-
----
-
-
-
 <a id="q16"></a>
 ### Вопрос: Перегрузка операторов и приведения
 
 **Краткий ответ:**
 
 - Операторы определяются как `public static` методы (`operator +`, `==` и т.д.). При переопределении `==` обязательно переопределять `!=`, а также `Equals`/`GetHashCode`.
-- Приведения: `implicit` (безопасные, без потери данных) и `explicit` (требуют каста, возможна потеря).
+- **Пользовательские приведения** — тоже `operator`, но с ключевым словом `implicit` или `explicit` вместо `+`/`-`.
+
+**`implicit` и `explicit` — что это за ключевые слова**
+
+Это не отдельные инструкции, а часть объявления **оператора приведения типа**:
+
+```csharp
+public static implicit operator ЦелевойТип(ИсходныйТип x) { ... }
+public static explicit operator ЦелевойТип(ИсходныйТип x) { ... }
+```
+
+| | `implicit` | `explicit` |
+|---|---|---|
+| Синтаксис при использовании | компилятор подставляет **сам** | нужен **явный каст** `(Тип)` |
+| Ожидание | «безопасно, без сюрпризов» | «может потерять данные или смысл — пусть программист напишет каст осознанно» |
+| Кто решает | компилятор разрешает молча | только ты, явно |
+
+**Встроенные примеры (BCL):**
+
+```csharp
+long x = 42;        // int → long: implicit (ничего не пишем)
+int i = (int)x;     // long → int: explicit (нужен каст, старшие биты отбросятся)
+
+double d = 3.14;
+int n = (int)d;     // explicit — дробная часть потеряется
+```
+
+**Свой тип — пример:**
+
+```csharp
+public readonly struct Celsius
+{
+    public double Value { get; }
+    public Celsius(double v) => Value = v;
+
+    // Celsius → double: «просто достань число» — безопасно
+    public static implicit operator double(Celsius c) => c.Value;
+
+    // double → Celsius: «оберни в тип» — явный каст, чтобы не путать с обычным double
+    public static explicit operator Celsius(double d) => new(d);
+}
+
+Celsius t = new(36.6);
+double x = t;              // implicit — каст не пишем
+Celsius t2 = (Celsius)36.6; // explicit — каст обязателен
+// Celsius t3 = 36.6;      // ❌ ошибка компиляции без explicit
+```
+
+**Как читать строку объявления:**
+
+```csharp
+public static implicit operator double(Celsius c)
+//     ^^^^^^^^ ключевое слово: «неявное приведение»
+//                      ^^^^^^ во что превращаем
+//                             ^^^^^^^ из чего
+```
 
 **Пример:**
 
@@ -966,21 +1346,120 @@ public readonly struct Celsius
 
 **Краткий ответ:**
 
-- **Атрибуты** — метаданные на типах/членах, читаются через рефлексию (`[Obsolete]`, `[JsonPropertyName]`, кастомные).
-- **Рефлексия** — инспекция типов и динамический вызов в рантайме; гибко, но медленно и мешает trimming/AOT.
-- **Source Generators** — генерация кода **на этапе компиляции** (Roslyn): альтернатива рефлексии без рантайм-оверхеда. Применяется в `System.Text.Json`, логировании, DI, мапперах.
+- **Атрибут** — «наклейка с пометкой» на тип, метод, свойство, параметр или сборку. Синтаксис: `[ИмяАтрибута]` или `[ИмяАтрибута(аргументы)]` **перед** объявлением. Сам по себе **ничего не делает** — его **читает** фреймворк, компилятор или ваш код (часто через рефлексию).
+- Атрибут в рантайме — объект класса, наследующего `System.Attribute`; попадает в **метаданные** сборки.
+- **Рефлексия** — способ прочитать атрибуты и действовать по ним в рантайме (`GetCustomAttribute<T>()`).
+- **Source Generators** — читают атрибуты **на этапе компиляции** и генерируют код (быстрее, дружит с AOT).
 
-**Пример:**
+**Что это за «квадратные скобки»**
+
+```csharp
+[Obsolete("Используй SaveAsync")]
+public void Save() { ... }
+
+[Authorize(Roles = "Admin")]
+[HttpGet("{id}")]
+public IActionResult Get(int id) => ...;
+
+[Required]
+[MaxLength(100)]
+public string Name { get; set; }
+```
+
+`[...]` — это **применение атрибута** к следующему объявлению (класс, метод, свойство…). `Obsolete` и `Authorize` — классы; компилятор создаёт экземпляр и записывает в метаданные.
+
+Суффикс `Attribute` можно опускать: `[Obsolete]` = `[ObsoleteAttribute]`.
+
+**Куда можно вешать**
+
+Задаётся `[AttributeUsage(...)]` на классе атрибута:
+
+| Цель | Пример |
+|---|---|
+| класс, struct, record | `[Serializable] class Order` |
+| метод | `[HttpPost] void Create()` |
+| свойство, поле | `[JsonPropertyName("name")]` |
+| параметр | `void M([FromBody] Request req)` |
+| сборка целиком | `[assembly: InternalsVisibleTo("Tests")]` |
+
+**Как объявить свой атрибут**
+
+```csharp
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false)]
+public sealed class AuditAttribute : Attribute
+{
+    public string Action { get; }
+    public AuditAttribute(string action) => Action = action;
+}
+
+[Audit("CreateOrder")]
+public class OrderService
+{
+    [Audit("Save")]
+    public void Save() { }
+}
+```
+
+**Кто и когда читает**
+
+| Когда | Кто | Пример |
+|---|---|---|
+| Компиляция | Roslyn, source generator | `[JsonSerializable]` → генерируется сериализатор |
+| Старт приложения | ASP.NET Core, EF, DI | сканирует `[Controller]`, `[Route]`, `[Table]` |
+| Вызов метода | Middleware, фильтры | `[Authorize]` перед action |
+| Рантайм по запросу | Ваш код / рефлексия | `method.GetCustomAttribute<AuditAttribute>()` |
+
+```csharp
+var attr = typeof(OrderService)
+    .GetMethod(nameof(OrderService.Save))!
+    .GetCustomAttribute<AuditAttribute>();
+Console.WriteLine(attr?.Action);  // "Save"
+```
+
+**Частые атрибуты из жизни**
+
+```csharp
+[Obsolete("Устарело")]           // предупреждение компилятора
+[Serializable]                   // пометка для BinaryFormatter (legacy)
+[JsonPropertyName("order_id")]   // System.Text.Json — имя в JSON
+[Required], [Range(1, 100)]      // DataAnnotations — валидация модели
+[Authorize], [AllowAnonymous]  // ASP.NET — доступ к endpoint
+[HttpGet], [Route("api/orders")] // маршрутизация
+[Fact], [Theory]                 // xUnit — тестовые методы
+[Conditional("DEBUG")]           // метод вызывается только при #define DEBUG
+```
+
+**Атрибут ≠ выполнение кода**
+
+```csharp
+[Audit("X")]
+public void Save() { }
+```
+
+Сам `Save()` **не** «знает» про аудит. Кто-то снаружи должен:
+
+1. найти методы с `[Audit]` (рефлексия при старте);
+2. обернуть вызов / залогировать / отправить в очередь.
+
+ASP.NET делает то же с `[Authorize]`: middleware смотрит метаданные до вызова action.
+
+**Связь с рефлексией и Source Generators**
+
+- **Рефлексия:** атрибуты лежат в метаданных → `GetCustomAttributes` → фабрика, валидатор, плагины. Твой `Message`-реестр по имени класса — соседний паттерн; атрибуты дали бы явную пометку `[TelegramCode("STEI")]`.
+- **Source Generators:** компилятор видит `[JsonSerializable(typeof(Person))]` и **генерирует** `JsonTypeInfo` на этапе сборки — без обхода свойств рефлексией в рантайме.
 
 ```csharp
 [JsonSerializable(typeof(Person))]
-internal partial class AppJsonContext : JsonSerializerContext { } // source-generated
+internal partial class AppJsonContext : JsonSerializerContext { } // сгенерировано
 ```
 
 **Подводные камни:**
 
-- Рефлексия ломает Native AOT/trimming (типы могут быть вырезаны) — для AOT предпочитайте source generators.
-- Рефлексия на горячем пути — узкое место; кэшируйте `MemberInfo`/делегаты.
+- Атрибут на методе **не запускается сам** — без читателя бесполезен.
+- `AllowMultiple = true` — несколько одинаковых атрибутов на одном члене; иначе второй — ошибка.
+- Рефлексия для чтения атрибутов на hot path — кэшируйте результат при старте.
+- Рефлексия + только атрибуты всё равно мешают Native AOT/trimming — для AOT предпочитайте source generators.
+- Параметры атрибута — только **константы** и `typeof(...)`: строки, числа, `bool`, enum; нельзя передать `new List<int>()`.
 
 [↑ Наверх](#top)
 

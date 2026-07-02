@@ -10,7 +10,7 @@
 
 | # | Тема | Файл | Статус |
 |---|------|------|--------|
-| 1 | C# язык и его возможности | [language-platform/01-csharp-language.md](./topics/language-platform/01-csharp-language.md) | 🟡 |
+| 1 | C# язык и его возможности | [language-platform/01-csharp-language.md](./topics/language-platform/01-csharp-language.md) | ✅ |
 | 2 | CLR, GC и управление памятью | [language-platform/02-clr-gc-memory.md](./topics/language-platform/02-clr-gc-memory.md) | 🟡 |
 | 3 | Многопоточность и асинхронность | [language-platform/03-async-multithreading.md](./topics/language-platform/03-async-multithreading.md) | 🟡 |
 | 4 | Коллекции и структуры данных | [language-platform/04-collections-data-structures.md](./topics/language-platform/04-collections-data-structures.md) | 🟡 |
