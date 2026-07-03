@@ -786,36 +786,21 @@ var result = q.ToList();   // Age > 21
 
 **Краткий ответ:**
 
-- `IDisposable.Dispose()` — детерминированное освобождение **неуправляемых** ресурсов (файлы, сокеты, соединения) и подписок.
-- `using` гарантирует вызов `Dispose()` даже при исключении. `using var x = ...;` — до конца области видимости.
-- **Финализатор (**`~Class`**)** — страховка на случай, если забыли `Dispose`; вызывается GC недетерминированно, замедляет сборку (объект переживает лишний цикл GC). Нужен только при прямом владении неуправляемым ресурсом.
-- `IAsyncDisposable.DisposeAsync()` + `await using` — для асинхронной очистки (например, flush в поток).
+- `IDisposable.Dispose()` — детерминированное освобождение ресурсов (файлы, сокеты, соединения, подписки). Подробный **Dispose pattern** и `Dispose(true/false)` — в [теме 02, q6](./02-clr-gc-memory.md#q6).
+- `using` / `await using` гарантируют `Dispose` / `DisposeAsync` даже при исключении.
+- **Финализатор (`~Class`)** — страховка GC для **неуправляемого** native, если забыли `Dispose`. Очередь финализации, `GC.SuppressFinalize` — [тема 02, q7](./02-clr-gc-memory.md#q7).
 
-**Пример (Dispose pattern):**
+**Пример:**
 
 ```csharp
-public class Resource : IDisposable
-{
-    private bool _disposed;
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);   // отменяем финализацию — уже всё освободили
-    }
-    protected virtual void Dispose(bool disposing)
-    {
-        if (_disposed) return;
-        if (disposing) { /* освободить управляемые */ }
-        /* освободить неуправляемые */
-        _disposed = true;
-    }
-}
+await using var conn = new NpgsqlConnection(cs);
+await conn.OpenAsync();
 ```
 
 **Подводные камни:**
 
-- Забытый `Dispose` у соединений → утечки/исчерпание портов; но `HttpClient` как раз НЕ нужно оборачивать в `using` (см. тему 11).
-- Финализатор без `GC.SuppressFinalize` в `Dispose` оставляет объект на лишний цикл GC.
+- Забытый `Dispose` у соединений → утечки/исчерпание портов; `HttpClient` из factory — не `using` на каждый запрос (тема 11).
+- Финализатор «на всякий случай» без native — лишняя нагрузка на GC.
 
 [↑ Наверх](#top)
 
