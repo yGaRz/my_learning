@@ -5,26 +5,26 @@
 
 <a id="top"></a>
 
-> Статус: 🟡 в работе · Уровень: Senior
+> Статус: ⬜ не начато · Уровень: Senior
 
 ## Что проверяют
 Знание внутреннего устройства коллекций .NET, сложности операций (Big-O), осознанный выбор коллекции под задачу.
 
 ## Ключевые вопросы (чеклист)
-- [x] [`List<T>` — устройство, рост capacity, амортизированная вставка](#q1)
-- [x] [`Dictionary<K,V>` — хеш-таблица, бакеты, коллизии, GetHashCode/Equals](#q2)
-- [x] [`HashSet<T>`, `SortedDictionary`, `SortedSet` (дерево) — отличия и Big-O](#q3)
-- [x] [`Array` vs `List<T>`, многомерные и jagged-массивы](#q4)
-- [x] [`LinkedList<T>` — когда реально нужен](#q5)
-- [x] [`Queue<T>`, `Stack<T>`, `PriorityQueue<T>`](#q6)
-- [x] [Потокобезопасные: `ConcurrentDictionary`, `ConcurrentQueue`, `BlockingCollection`](#q7)
-- [x] [`IEnumerable`/`ICollection`/`IList`/`IReadOnlyList` — иерархия интерфейсов](#q8)
-- [x] [Immutable collections (`ImmutableArray`, `ImmutableList`)](#q9)
-- [x] [`Span<T>`/`ReadOnlySpan<T>` поверх коллекций](#q10)
-- [x] [Корректная реализация `Equals`/`GetHashCode` для ключей](#q11)
-- [x] Сложность основных операций у каждой коллекции
-- [x] [`IEnumerator`, `yield return`, ленивые последовательности](#q12)
-- [x] [LINQ и материализация (`ToList`/`ToArray`), множественный перебор](#q13)
+- [ ] [`List<T>` — устройство, рост capacity, амортизированная вставка](#q1)
+- [ ] [`Dictionary<K,V>` — хеш-таблица, бакеты, коллизии, GetHashCode/Equals](#q2)
+- [ ] [`HashSet<T>`, `SortedDictionary`, `SortedSet` (дерево) — отличия и Big-O](#q3)
+- [ ] [`Array` vs `List<T>`, многомерные и jagged-массивы](#q4)
+- [ ] [`LinkedList<T>` — когда реально нужен](#q5)
+- [ ] [`Queue<T>`, `Stack<T>`, `PriorityQueue<T>`](#q6)
+- [ ] [Потокобезопасные: `ConcurrentDictionary`, `ConcurrentQueue`, `BlockingCollection`](#q7)
+- [ ] [`IEnumerable`/`ICollection`/`IList`/`IReadOnlyList` — иерархия интерфейсов](#q8)
+- [ ] [Immutable collections (`ImmutableArray`, `ImmutableList`)](#q9)
+- [ ] [`Span<T>`/`ReadOnlySpan<T>` поверх коллекций](#q10)
+- [ ] [Корректная реализация `Equals`/`GetHashCode` для ключей](#q11)
+- [ ] Сложность основных операций у каждой коллекции
+- [ ] [`IEnumerator`, `yield return`, ленивые последовательности](#q12)
+- [ ] [LINQ и материализация (`ToList`/`ToArray`), множественный перебор](#q13)
 
 ## Шпаргалка по сложности
 | Коллекция | Доступ по индексу | Поиск | Вставка | Удаление |
